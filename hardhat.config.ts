@@ -4,9 +4,12 @@ import "hardhat-etherscan-abi";
 
 const config: HardhatUserConfig = {
   networks: {
-    mainnet: {
-      url: "https://eth-mainnet.g.alchemy.com/v2/TDkb5d4PAS74xENcL11MQKUUaAYMxxeu",
-    },
+    hardhat: {
+      forking: {
+        url: "https://eth-mainnet.g.alchemy.com/v2/TDkb5d4PAS74xENcL11MQKUUaAYMxxeu",
+        blockNumber: 16732843
+      }
+    }
   },
   solidity: {
     settings: {
