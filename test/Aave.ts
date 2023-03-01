@@ -29,9 +29,8 @@ describe("AAVE", function () {
 
   describe("1. Deposit USDC into Lending Pool", function () {
     it("Should deposit", async function () {
-      await usdc.connect(richieRich).approve(lendingPoolAddress, 1000000000000);
-      await lendingPool.connect(richieRich).deposit(usdcAddress, 1000000000000, 0);
-      
+      await usdc.connect(richieRich).approve(lendingPoolAddress, ethers.constants.MaxUint256);
+      await lendingPool.connect(richieRich).deposit(usdcAddress, ethers.utils.parseUnits("1000000", 6), richieRich.address, 0);
     });
 
   });
