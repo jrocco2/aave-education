@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.1",
+    "@typechain/ethers-v5": "^10.2.0",
+    "ethereum-abi-types-generator": "^1.3.2",
+    "hardhat": "^2.12.7"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "hardhat-etherscan-abi": "^0.3.0",
+    "hardhat-etherscan-contract-cloner": "^1.0.6",
+    "typechain": "^8.1.1"
+  },
+  "scripts": {
+    "lend-abi": "abi-types-generator './abis/LendingPool.json' --output='./typechain-types' --name=LendingPool --provider=ethers"
+  }
+}
