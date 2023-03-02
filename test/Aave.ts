@@ -46,20 +46,6 @@ describe("AAVE", function () {
 
   });
 
-  async function getUserDetails(heading: string) {
-    let userAccountData = await lendingPool.getUserAccountData(richieRich.address);
-    const maxBorrowAmount = userAccountData.availableBorrowsETH;
-    const healthFactor = userAccountData.healthFactor;
-    console.log("---------------------------------------------------------------")
-    console.log(`|                   ${heading}                        `)
-    console.log("---------------------------------------------------------------")
-    console.log("Total ETH Deposited: ", ethers.utils.formatEther(userAccountData.totalCollateralETH));
-    console.log("Max Borrow Amount: ", ethers.utils.formatEther(maxBorrowAmount));
-    console.log("Health Factor: ", ethers.utils.formatEther(healthFactor));
-    console.log("---------------------------------------------------------------")
-    return { maxBorrowAmount, healthFactor };
-  }
-
   describe("AAVE", function () {
     it("1. Deposit USDC", async function () {
       const amount = ethers.utils.parseUnits("1000", 6);
@@ -106,5 +92,19 @@ describe("AAVE", function () {
       await getUserDetails("Transfer All aTokens");
     });
   });
+  async function getUserDetails(heading: string) {
+    let userAccountData = await lendingPool.getUserAccountData(richieRich.address);
+    const maxBorrowAmount = userAccountData.availableBorrowsETH;
+    const healthFactor = userAccountData.healthFactor;
+    console.log("---------------------------------------------------------------")
+    console.log(`|                   ${heading}                        `)
+    console.log("---------------------------------------------------------------")
+    console.log("Total ETH Deposited: ", ethers.utils.formatEther(userAccountData.totalCollateralETH));
+    console.log("Total ETH Borrowed: ", ethers.utils.formatEther(await avweth.balanceOf(richieRich.address)));
+    console.log("Max Borrow Amount: ", ethers.utils.formatEther(maxBorrowAmount));
+    console.log("Health Factor: ", ethers.utils.formatEther(healthFactor));
+    console.log("---------------------------------------------------------------")
+    return { maxBorrowAmount, healthFactor };
+  }
 
 });
