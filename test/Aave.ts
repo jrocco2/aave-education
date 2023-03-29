@@ -91,6 +91,51 @@ describe("AAVE", function () {
       await aweth.connect(richieRich).transfer(usdcAddress, ethers.utils.parseEther("75"));
       await getUserDetails("Transfer All aTokens");
     });
+
+    describe("AAVE Session 2", function () {
+      it("1. Deposit USDC", async function () {
+        const amount = ethers.utils.parseUnits("100000000", 6);
+        // await usdc.connect(richieRich).approve(lendingPoolAddress, ethers.constants.MaxUint256);
+        await lendingPool.connect(richieRich).deposit(usdcAddress, amount, richieRich.address, 0);
+        const balance = await ausdc.balanceOf(richieRich.address);
+        await getUserDetails("Deposit USDC");
+  
+      });
+
+      it("2. Borrow wETH", async function () {
+
+        let { maxBorrowAmount } = await getUserDetails("Borrow wETH - BEFORE");
+        await lendingPool.connect(richieRich).borrow(wethAddress, maxBorrowAmount, 2, 0, richieRich.address);
+        await getUserDetails("Borrow wETH - AFTER");
+
+      });
+
+      it("3. Attack Prive Oracle", async function () {
+        let aaveOracleAddress = "0xA50ba011c48153De246E5192C8f9258A2ba79Ca9"
+        let ownerOfAaveOracle = "0xEE56e2B3D491590B5b31738cC34d5232F378a8D5"
+        let currentUSDCPrice = ethers.BigNumber.from("552000426033234")
+        // let currentUSDCPrice = ethers.BigNumber.from("552000426033234").sub(ethers.BigNumber.from("10000000000000"))
+        let ChainlinkOracle = await ethers.getContractFactory("ChainlinkOracle");
+        let chainlinkOracle = await ChainlinkOracle.deploy(currentUSDCPrice);
+
+        
+        let fakeOwner = await ethers.getImpersonatedSigner(ownerOfAaveOracle);
+        let abi = ["function setAssetSources(address[] calldata assets, address[] calldata sources)"]
+        let aaveOracle = new ethers.Contract(aaveOracleAddress, abi);
+        await aaveOracle.connect(fakeOwner).setAssetSources([usdcAddress], [chainlinkOracle.address]);
+        await getUserDetails("Borrow wETH - AFTER");
+
+      });
+
+      it("4. Liquidate Richie Rich", async function () {
+        
+        await weth.connect(richieRich).approve(lendingPoolAddress, ethers.constants.MaxUint256);
+        await lendingPool.connect(richieRich).liquidationCall(usdcAddress, weth.address, richieRich.address, ethers.constants.MaxUint256, false);
+        await getUserDetails("Borrow wETH - AFTER");
+
+      });
+
+    })
   });
   async function getUserDetails(heading: string) {
     let userAccountData = await lendingPool.getUserAccountData(richieRich.address);
